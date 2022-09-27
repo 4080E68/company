@@ -1,3 +1,3 @@
 <template>
-  <router-view/>
+  登入頁面
 </template>
