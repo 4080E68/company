@@ -1,0 +1,37 @@
+/* 隱藏數字輸入框的箭頭 */
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number], input[type=tel] {
+  -moz-appearance: textfield;
+}
+
+input[type=checkbox]:hover{
+  cursor: pointer;
+}
+
+input[type=text], input[type=number], input[type=password]{
+  border-radius: 6px;
+  padding: .5rem 1rem;
+}
+
+.loginForm{
+  input{
+    border: 1px solid #6C757D;
+    background-color: #F8F9FA;
+  }
+  .is-invalid{
+    border: 2px solid $danger;
+    &:focus{
+      border-color: $danger;
+    }
+  }
+}
+
+.rememberMeInput{
+  &:checked{
+    background-image: url('@/assets/icons/login_checkbox_checked.png')
+  }
+}
