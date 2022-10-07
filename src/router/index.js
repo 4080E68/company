@@ -1,31 +1,34 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from "vue-router";
 // import Layout from '@/layout/Index.vue';
-
 
 const routes = [
   {
-    path: '/',
-    redirect: '/login',
+    path: "/",
+    redirect: "/login",
     children: [
       {
-        path: 'login',
-        name: 'login',
-        component: () => import('@/views/login/Index.vue'),
+        path: "login",
+        name: "login",
+        component: () => import("@/views/login/Index.vue"),
       },
     ],
   },
-]
+  {
+    path: "/echart",
+    component: () => import("@/views/login/Echarts.vue"),
+  },
+];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  linkActiveClass: 'active',
+  linkActiveClass: "active",
   scrollBehavior() {
     return {
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     };
   },
 });
 
-export default router
+export default router;
