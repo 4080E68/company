@@ -123,6 +123,7 @@
       </div>
 
       <button
+        @click="ValidateCode()"
         type="submit"
         class="btn btn-primary text-white fw-bold rounded-pill w-100 mb-3"
       >
@@ -144,7 +145,7 @@
 import { Field, Form, ErrorMessage } from "vee-validate";
 import ValidationCode from "@/components/login/ValidationCode.vue";
 import { Base64 } from "js-base64";
-import { encode, decode } from "js-base64";
+// import { encode, decode } from "js-base64";
 
 export default {
   data() {
@@ -154,6 +155,7 @@ export default {
       eMessage: "",
       inputValidateCode: "",
       userData: {},
+      verify: false,
     };
   },
   components: {
@@ -162,23 +164,35 @@ export default {
     ErrorMessage,
     ValidationCode,
   },
+  watch: {
+    inputValidateCode: function () {
+      this.eMessage = "";
+    },
+  },
   methods: {
-    login(value) {
-      if (value.驗證碼 !== this.nowValidateCode) {
+    ValidateCode() {
+      if (
+        this.inputValidateCode !== this.nowValidateCode &&
+        this.inputValidateCode !== ""
+      ) {
         this.eMessage = "驗證碼錯誤";
       } else {
         this.eMessage = ""; // 驗證成功
-        if (this.$refs.rememberMe.checked) {
-          // 驗證碼正確且有勾選記住我
-          localStorage.clear();
-          localStorage.setItem(
-            "userData",
-            Base64.encode(JSON.stringify(value))
-          );
-          // 前往登入後頁面
-        } else {
-          // 前往登入後頁面
-        }
+        this.verify = true;
+      }
+    },
+    login(value) {
+      if (this.$refs.rememberMe.checked && this.verify) {
+        // 驗證碼正確且有勾選記住我
+        localStorage.clear();
+        localStorage.setItem("userData", Base64.encode(JSON.stringify(value)));
+        // 前往登入後頁面
+        this.verify = false; // 驗證改為否
+        console.log("登入且有勾選記住功能");
+      } else if (!this.$refs.rememberMe.checked && this.verify) {
+        this.verify = false;
+        // 前往登入後頁面
+        console.log("登入");
       }
     },
     togglePassword() {
