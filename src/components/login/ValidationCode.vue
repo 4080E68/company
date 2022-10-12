@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex ms-4">
-    <canvas id="mycanvas" width="110" height="40"></canvas>
+    <canvas id="mycanvas" width="110" height="40" ref="mycanvas"></canvas>
     <button type="button" class="btn px-0" @click="setValidateCode">
       <img src="@/assets/icons/login_renew_s.png" alt="" />
     </button>
@@ -84,6 +84,8 @@ export default {
       cxt.fillStyle = this.fontColors; //隨機文字顏色
       cxt.font = "bold 24px Verdana"; // 驗證碼的 font style
       cxt.fillText(this.randValidateCode(), 10, 30); // 把驗證碼填充到 canvas中
+      this.$refs.mycanvas.style.backgroundImage =
+        "url('/static/img/validateCode_bg.17dbdcdd.jpg')";
     },
   },
   mounted() {

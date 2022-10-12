@@ -1,4 +1,14 @@
 <template>
+  <Loading :active="isLoading">
+    <div class="loadingio-spinner-ellipsis-2jod0nogjkz">
+      <div class="ldio-evlsaudp4rs">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div></div
+  ></Loading>
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
   <div class="container">
     <div class="form-check form-switch">
@@ -16,11 +26,15 @@
     </div>
     <div
       id="main"
-      style="width: 100%; height: 400px; border: 1px solid"
+      style="width: 100%; height: 80vh; border: 1px solid"
       ref="chartDom"
     ></div>
+    <button @click="test()">test</button>
   </div>
 </template>
+<style>
+@import "@/style/components/_loading.scss";
+</style>
 <script>
 import Echart from "@/mixins/Echart";
 
@@ -28,60 +42,99 @@ export default {
   mixins: [Echart],
   data() {
     return {
+      isLoading: false,
+      chartData: [],
       option: {
-        title: {
-          text: "測試圖表",
-        },
         tooltip: {
+          valueFormatter: function (value) {
+            return value + " ml";
+          },
           trigger: "axis",
-        },
-        legend: {
-          data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"],
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true,
+          // axisPointer: {
+          //   type: "cross",
+          //   crossStyle: {
+          //     color: "red",
+          //   },
+          // },
         },
         toolbox: {
           feature: {
-            saveAsImage: {},
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ["line", "bar"] },
+            restore: { show: true },
+            saveAsImage: { show: true },
           },
         },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        legend: {},
+        xAxis: [
+          { type: "category", gridIndex: 0 },
+          { type: "category", gridIndex: 1 },
+        ],
+        // 声明一个 Y 轴，数值轴。
+        yAxis: [
+          {
+            // interval: 50,
+            // max: 200,
+            axisLabel: {
+              formatter: "{value} ml",
+            },
+            gridIndex: 0,
+          },
+          {
+            // interval: 50,
+            // max: 200,
+            axisLabel: {
+              formatter: "{value} ml",
+            },
+            gridIndex: 1,
+          },
+        ],
+        dataset: {
+          // 提供一份数据。
+          source: [
+            ["product", "2015", "2016", "2017"],
+            ["Matcha Latte", 43.3, 85.8, 93.7],
+            ["Milk Tea", 83.1, 73.4, 55.1],
+            ["Cheese Cocoa", 86.4, 65.2, 82.5],
+            ["Walnut Brownie", 72.4, 53.9, 39.1],
+          ],
         },
-        yAxis: {
-          type: "value",
-        },
+        grid: [{ bottom: "60%" }, { top: "60%" }],
         series: [
           {
-            name: "Email",
-            type: "line",
-            data: [500, 132, 101, 134, 90, 230, 210],
+            type: "bar",
+            seriesLayoutBy: "row",
           },
           {
-            name: "Union Ads",
-            type: "line",
-            data: [500, 182, 191, 234, 290, 330, 310],
+            type: "bar",
+            seriesLayoutBy: "row",
           },
           {
-            name: "Video Ads",
-            type: "line",
-            data: [150, 232, 201, 154, 190, 330, 410],
+            type: "bar",
+            seriesLayoutBy: "row",
           },
           {
-            name: "Direct",
-            type: "line",
-            data: [320, 332, 301, 334, 390, 330, 320],
+            type: "bar",
+            seriesLayoutBy: "row",
           },
           {
-            name: "Search Engine",
-            type: "line",
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: "bar",
+            seriesLayoutBy: "row",
+          },
+          {
+            type: "bar",
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+          },
+          {
+            type: "bar",
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+          },
+          {
+            type: "bar",
+            xAxisIndex: 1,
+            yAxisIndex: 1,
           },
         ],
       },
@@ -89,17 +142,20 @@ export default {
   },
   mounted() {
     this.initOption();
-    console.log(this.Chart);
+    this.option.dataset.source.push(["test", 32.4, 43.9, 69.1]);
+    this.Chart.setOption(this.option);
   },
   methods: {
-    initOption() {
-      this.Chart.setOption({
-        // 設置圖表
-      });
-    },
+    initOption() {},
     model_state() {
       this.dark_model(this.$refs.dark_model.checked);
       this.initOption();
+    },
+    test() {
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 2000);
     },
   },
 };

@@ -11,6 +11,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "@/style/style.scss";
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 
 defineRule("required", required);
 defineRule("email", email);
@@ -42,4 +44,5 @@ app.use(Vuex);
 app.use(store);
 app.use(router);
 app.use(VueAxios, axios);
+app.component('Loading', Loading)
 app.mount("#app");
