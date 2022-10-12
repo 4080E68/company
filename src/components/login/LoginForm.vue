@@ -12,7 +12,7 @@
           class="formInput"
           :class="{ 'is-invalid': errors['公司統編'] }"
           placeHolder="例如: 24436074"
-          :value="userData.公司統編"
+          v-model="userData.taxId"
         />
         <ErrorMessage class="text-danger invalid-feedback" name="公司統編" />
       </div>
@@ -27,7 +27,7 @@
           class="formInput"
           :class="{ 'is-invalid': errors['帳號'] }"
           placeHolder="例如: LaFresh"
-          :value="userData.帳號"
+          v-model="userData.account"
         />
         <ErrorMessage class="text-danger invalid-feedback" name="帳號" />
       </div>
@@ -44,7 +44,7 @@
             class="passwordInput formInput w-100"
             :class="{ 'is-invalid': errors['密碼'] }"
             placeHolder="6 - 8 英數混合，注意大小寫"
-            :value="userData.密碼"
+            v-model="userData.password"
           />
           <button
             class="togglePasswordBtn btn"
@@ -84,8 +84,7 @@
             />
             <span
               v-if="eMessage && inputValidateCode !== ''"
-              class="text-danger"
-              style="font-size: 0.875em"
+              class="errorMessage"
               >{{ eMessage }}</span
             >
             <ErrorMessage class="text-danger invalid-feedback" name="驗證碼" />
@@ -96,7 +95,7 @@
         </div>
       </div>
 
-      <div class="d-center mb-4 fs-8" style="color: #6c757d">
+      <div class="d-center mb-4 fs-8 text-color1">
         <div class="form-check mb-0 d-flex align-items-center">
           <input
             class="rememberMeInput form-check-input me-1"
@@ -104,20 +103,13 @@
             value=""
             id="rememberMe"
             ref="rememberMe"
-            style="margin-bottom: 0.15rem"
           />
-          <label
-            class="form-check-label"
-            style="font-weight: normal; cursor: pointer"
-            for="rememberMe"
+          <label class="form-check-label fw-normal" for="rememberMe"
             >記住我</label
           >
         </div>
         <span class="mx-2">|</span>
-        <router-link
-          style="color: #6c757d"
-          class="text-decoration-none"
-          to="/login"
+        <router-link class="text-decoration-none text-color1" to="/login"
           >忘記密碼？</router-link
         >
       </div>
@@ -182,10 +174,14 @@ export default {
       }
     },
     login(value) {
+      console.log(value);
       if (this.$refs.rememberMe.checked && this.verify) {
         // 驗證碼正確且有勾選記住我
         localStorage.clear();
-        localStorage.setItem("userData", Base64.encode(JSON.stringify(value)));
+        localStorage.setItem(
+          "userData",
+          Base64.encode(JSON.stringify(this.userData))
+        );
         // 前往登入後頁面
         this.verify = false; // 驗證改為否
         console.log("登入且有勾選記住功能");
@@ -212,7 +208,11 @@ export default {
     },
   },
   created() {
-    this.userData = JSON.parse(Base64.decode(localStorage.getItem("userData")));
+    if (localStorage.getItem("userData")) {
+      this.userData = JSON.parse(
+        Base64.decode(localStorage.getItem("userData"))
+      );
+    }
   },
 };
 </script>

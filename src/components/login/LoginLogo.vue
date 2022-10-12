@@ -9,7 +9,6 @@
       v-if="!isMobile"
       class="fixedBottomCenter text-white text-center"
       ref="reference"
-      style="margin-bottom: 92px"
     >
       v 2.103.4<br />
       Copyright © 2022 La Fresh Information, All rights reserved.

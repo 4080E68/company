@@ -7,18 +7,21 @@
       <div class="col-md-6 d-flex flex-column justify-content-between">
         <LoginForm />
         <div
-          class="copyright text-center fs-7 d-flex align-items-center justify-content-center"
-          style="color: #9f9f9f; margin-bottom: 18px; height: 15vh"
+          class="copyright text-center d-flex align-items-center justify-content-center"
           v-if="isMobile"
         >
           v 2.103.4 <br />
           Copyright © 2022 La Fresh Information. <br />
           All rights reserved.
         </div>
+        <!-- style="color: #9f9f9f; margin-bottom: 18px; height: 15vh" -->
       </div>
     </div>
   </div>
 </template>
+<style lang="scss">
+@import "@/style/_index.scss";
+</style>
 
 <script>
 import LoginForm from "@/components/login/LoginForm.vue";

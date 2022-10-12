@@ -1,3 +1,6 @@
+$font-size: (
+  errorMessage: 0.875rem,
+);
 .form {
   align-items: center;
   @media (max-width: 540px) {
@@ -13,4 +16,11 @@
 label {
   font-weight: bold;
   color: #6c757d;
+}
+.rememberMeInput {
+  margin-bottom: 0.1rem;
+}
+.errorMessage {
+  font-size: map-get($font-size, errorMessage);
+  color: red;
 }
