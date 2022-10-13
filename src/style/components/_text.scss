@@ -2,11 +2,16 @@ $font-size: (
   1: 32px,
   2: 24px,
   3: 12px,
+  errorMessage: 0.875rem,
 );
+
 $copyright-color: #9f9f9f;
 .copyright {
   font-size: map-get($font-size, 3);
   color: $copyright-color;
-  padding-top: 2rem;
   padding-bottom: 18px;
+}
+.errorMessage {
+  font-size: map-get($font-size, errorMessage);
+  color: red;
 }

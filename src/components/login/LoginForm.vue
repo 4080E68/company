@@ -129,9 +129,6 @@
     </Form>
   </div>
 </template>
-<style lang="scss">
-@import "@/style/components/login";
-</style>
 
 <script>
 import { Field, Form, ErrorMessage } from "vee-validate";

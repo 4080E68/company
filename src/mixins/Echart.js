@@ -67,5 +67,10 @@ export default {
                 this.initChart();
             }
         },
+        changeChart(option) {
+            this.Chart.dispose();
+            this.Chart = echarts.init(this.$refs.chartDom); // 初始畫圖表
+            this.option && this.Chart.setOption(option);
+        }
     },
 };

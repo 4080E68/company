@@ -29,14 +29,25 @@
       style="width: 100%; height: 80vh; border: 1px solid"
       ref="chartDom"
     ></div>
-    <button @click="test()">test</button>
+    <button @click="test()">載入動畫</button>
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="flexSwitchCheckDefault"
+        ref="changeChart"
+        @click="change()"
+      />
+      <label class="form-check-label" for="flexSwitchCheckDefault"
+        >切換表</label
+      >
+    </div>
   </div>
 </template>
-<style>
-@import "@/style/components/_loading.scss";
-</style>
 <script>
 import Echart from "@/mixins/Echart";
+import axios from "axios";
 
 export default {
   mixins: [Echart],
@@ -46,95 +57,103 @@ export default {
       chartData: [],
       option: {
         tooltip: {
-          valueFormatter: function (value) {
-            return value + " ml";
-          },
           trigger: "axis",
           // axisPointer: {
           //   type: "cross",
           //   crossStyle: {
-          //     color: "red",
+          //     color: "#999",
           //   },
           // },
-        },
-        toolbox: {
-          feature: {
-            dataView: { show: true, readOnly: false },
-            magicType: { show: true, type: ["line", "bar"] },
-            restore: { show: true },
-            saveAsImage: { show: true },
+          valueFormatter: function (value) {
+            return value + "萬";
           },
         },
-        legend: {},
+        // toolbox: {
+        //   feature: {
+        //     dataView: { show: true, readOnly: false },
+        //     magicType: { show: true, type: ["line", "bar"] },
+        //     restore: { show: true },
+        //     saveAsImage: { show: true },
+        //   },
+        // },
+        legend: {
+          data: ["金額成長比"],
+        },
         xAxis: [
-          { type: "category", gridIndex: 0 },
-          { type: "category", gridIndex: 1 },
+          {
+            type: "category",
+            // data: ["A門市", "B門市", "C門市"],
+            // axisPointer: {
+            //   type: "shadow",
+            // },
+          },
         ],
-        // 声明一个 Y 轴，数值轴。
         yAxis: [
           {
-            // interval: 50,
-            // max: 200,
+            type: "value",
+            name: "金額",
+            // min: 0,
+            // max: 100000,
             axisLabel: {
-              formatter: "{value} ml",
+              formatter: "{value} 萬",
             },
-            gridIndex: 0,
           },
           {
-            // interval: 50,
-            // max: 200,
+            type: "value",
+            name: "金額成長比",
+            min: 0,
+            max: 100,
+            interval: 20,
             axisLabel: {
-              formatter: "{value} ml",
+              formatter: "{value} %",
             },
-            gridIndex: 1,
           },
         ],
         dataset: {
           // 提供一份数据。
+          // dimensions:["product", "A門市", "B門市", "C門市", "金額成長比"],
+          // source: [
+          //   ["product", "A門市", "B門市", "C門市", "金額成長比"],
+          //   ["Matcha Latte", 430.3, 850.8, 930.7, 20],
+          //   ["Milk Tea", 830.1, 730.4, 550.1, 30],
+          //   ["Walnut Brownie", 720.4, 530.9, 390.1, 60],
+          // ],
           source: [
-            ["product", "2015", "2016", "2017"],
-            ["Matcha Latte", 43.3, 85.8, 93.7],
-            ["Milk Tea", 83.1, 73.4, 55.1],
-            ["Cheese Cocoa", 86.4, 65.2, 82.5],
-            ["Walnut Brownie", 72.4, 53.9, 39.1],
+            ["product", "A門市", "B門市", "C門市"],
+            ["商品一", 330.3, 950.8, 1030.7],
+            ["商品二", 730.1, 630.4, 450.1],
+            ["商品三", 820.4, 630.9, 490.1],
           ],
+          // source: [
+          //   [
+          //     "store",
+          //     "Matcha Latte",
+          //     "Milk Tea",
+          //     "Walnut Brownie",
+          //     "金額成長比",
+          //   ],
+          //   ["A門市", 430.3, 830.1, 720.4, 20],
+          //   ["B門市", 850.8, 730.4, 530.9, 30],
+          //   ["C門市", 930.7, 550.1, 390.1, 60],
+          // ],
         },
-        grid: [{ bottom: "60%" }, { top: "60%" }],
+
         series: [
+          { type: "bar" },
+          { type: "bar" },
+          { type: "bar" },
           {
-            type: "bar",
-            seriesLayoutBy: "row",
-          },
-          {
-            type: "bar",
-            seriesLayoutBy: "row",
-          },
-          {
-            type: "bar",
-            seriesLayoutBy: "row",
-          },
-          {
-            type: "bar",
-            seriesLayoutBy: "row",
-          },
-          {
-            type: "bar",
-            seriesLayoutBy: "row",
-          },
-          {
-            type: "bar",
-            xAxisIndex: 1,
+            type: "line",
+            name: "金額成長比",
+            smooth: true,
             yAxisIndex: 1,
-          },
-          {
-            type: "bar",
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-          },
-          {
-            type: "bar",
-            xAxisIndex: 1,
-            yAxisIndex: 1,
+            data: [20, 50, 90],
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " %";
+              },
+            },
+            // seriesLayoutBy: "row",
           },
         ],
       },
@@ -142,9 +161,23 @@ export default {
   },
   mounted() {
     this.initOption();
-    this.option.dataset.source.push(["test", 32.4, 43.9, 69.1]);
-    this.Chart.setOption(this.option);
+    // axios
+    //   .get(
+    //     `${process.env.VUE_APP_BASE_API}/v1/product/category/combination_product_ticket?store_id=0`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${process.env.VUE_APP_TOKEN}`, // Bearer 跟 token 中間有一個空格
+    //       },
+    //     }
+    //   )
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response.data.message);
+    //   });
   },
+
   methods: {
     initOption() {},
     model_state() {
@@ -156,6 +189,19 @@ export default {
       setTimeout(() => {
         this.isLoading = false;
       }, 2000);
+    },
+    change() {
+      if (this.$refs.changeChart.checked) {
+        this.option.series.forEach((element) => {
+          element.seriesLayoutBy = "row";
+        });
+      } else {
+        this.option.series.forEach((element) => {
+          element.seriesLayoutBy = "";
+        });
+      }
+      console.log(this.option);
+      this.changeChart(this.option);
     },
   },
 };
