@@ -55,45 +55,34 @@ export default {
     return {
       isLoading: false,
       chartData: [],
+      Previous: {},
+      addArray: [],
+      nowModal: "",
       option: {
         tooltip: {
           trigger: "axis",
-          // axisPointer: {
-          //   type: "cross",
-          //   crossStyle: {
-          //     color: "#999",
-          //   },
-          // },
+          axisPointer: {
+            type: "cross",
+            crossStyle: {
+              color: "#999",
+            },
+          },
           valueFormatter: function (value) {
             return value + "萬";
           },
         },
-        // toolbox: {
-        //   feature: {
-        //     dataView: { show: true, readOnly: false },
-        //     magicType: { show: true, type: ["line", "bar"] },
-        //     restore: { show: true },
-        //     saveAsImage: { show: true },
-        //   },
-        // },
-        legend: {
-          data: ["金額成長比"],
-        },
+        legend: {},
         xAxis: [
           {
             type: "category",
-            // data: ["A門市", "B門市", "C門市"],
-            // axisPointer: {
-            //   type: "shadow",
-            // },
           },
         ],
         yAxis: [
           {
             type: "value",
             name: "金額",
-            // min: 0,
-            // max: 100000,
+            min: 0,
+            max: 1000,
             axisLabel: {
               formatter: "{value} 萬",
             },
@@ -119,41 +108,72 @@ export default {
           //   ["Walnut Brownie", 720.4, 530.9, 390.1, 60],
           // ],
           source: [
-            ["product", "A門市", "B門市", "C門市"],
-            ["商品一", 330.3, 950.8, 1030.7],
-            ["商品二", 730.1, 630.4, 450.1],
-            ["商品三", 820.4, 630.9, 490.1],
+            [
+              "product",
+              "商品一",
+              "商品二",
+              "商品三",
+              "商品四",
+              "商品五",
+              "商品六",
+              "金額成長比",
+            ],
+            ["門市一", 330.3, 950.8, 160.7, 250.3, 320, 852, 20],
+            ["門市二", 730.1, 630.4, 450.1, 600, 550, 591, 60],
+            ["門市三", 820.4, 630.9, 490.1, 299, 156, 300, 90],
+            ["門市四", 520.4, 430.9, 190.1, 999, 556, 400, 40],
+            ["門市五", 620.4, 130.9, 590.1, 554, 756, 100, 100],
+            // ["門市四", 620.4, 530.9, 990.1, 399, 10],
+            // ["金額成長比", 20, 60, 90],
           ],
-          // source: [
-          //   [
-          //     "store",
-          //     "Matcha Latte",
-          //     "Milk Tea",
-          //     "Walnut Brownie",
-          //     "金額成長比",
-          //   ],
-          //   ["A門市", 430.3, 830.1, 720.4, 20],
-          //   ["B門市", 850.8, 730.4, 530.9, 30],
-          //   ["C門市", 930.7, 550.1, 390.1, 60],
-          // ],
         },
 
         series: [
-          { type: "bar" },
-          { type: "bar" },
-          { type: "bar" },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
+          {
+            type: "bar",
+            emphasis: {
+              focus: "series",
+            },
+          },
           {
             type: "line",
-            name: "金額成長比",
             smooth: true,
             yAxisIndex: 1,
-            data: [20, 50, 90],
             tooltip: {
               valueFormatter: function (value) {
                 return value + " %";
               },
             },
-            // seriesLayoutBy: "row",
           },
         ],
       },
@@ -191,17 +211,56 @@ export default {
       }, 2000);
     },
     change() {
+      this.addArray = [];
       if (this.$refs.changeChart.checked) {
         this.option.series.forEach((element) => {
-          element.seriesLayoutBy = "row";
+          element.seriesLayoutBy = "row"; // 將排序方法變成row
+          // element.emphasis.focus = "series";
         });
+        this.option.dataset.source.forEach((e) => {
+          this.addArray.push(e.pop());
+        });
+        this.option.dataset.source.push(this.addArray);
+        this.row_reorganize();
       } else {
         this.option.series.forEach((element) => {
-          element.seriesLayoutBy = "";
+          element.seriesLayoutBy = ""; // 將排序方法清除因默認排序方法是column
         });
+        this.addArray = this.option.dataset.source.pop();
+        this.option.dataset.source.forEach((e) => {
+          e.push(this.addArray.shift());
+        });
+        this.column_reorganize();
       }
       console.log(this.option);
-      this.changeChart(this.option);
+      this.initChart(this.nowModal, this.option);
+      // this.changeChart(this.option);
+    },
+    column_reorganize() {
+      // 當是以column排法時series的數量永遠都要比source少一個
+      const count =
+        this.option.dataset.source[0].length - this.option.series.length - 1;
+      for (let i = 0; i < count; i++) {
+        this.option.series.splice(-1, 0, {
+          type: "bar",
+          emphasis: {
+            focus: "series",
+          },
+        }); // 將缺少的series補足
+      }
+    },
+    row_reorganize() {
+      // 當是以row排法時series的數量永遠都要比source多一個
+      let count = this.option.dataset.source.length - this.option.series.length;
+      // console.log(count);
+      while (count < 1) {
+        count++;
+        this.option.series.shift(); // 將多的series刪除
+      }
+      // while (count > 1) {
+      //   count--;
+      //   this.option.series.splice(-1, 0, { type: "bar" }); // 將缺少的series補足
+      // }
     },
   },
 };

@@ -46,12 +46,14 @@ export default {
 
     },
     methods: {
-        initChart(state = "") {
-            //   Chart.dispose(); // 因echart已經初始化一個表需要先銷毀先前的圖表
+        initChart(state = "", option = this.option) {
+            if (this.Chart) {
+                this.Chart.dispose(); // 因echart已經初始化一個表需要先銷毀先前的圖表
+            }
             this.Chart = echarts.init(this.$refs.chartDom, state); // 初始畫圖表
             // this.Chart.showLoading(); // 需先取得元素後才能使用showLoading
             // this.Chart.hideLoading();
-            this.option && this.Chart.setOption(this.option);
+            option && this.Chart.setOption(option);
             // myChart.on("click", function (params) {
             //   window.open(
             //     "https://www.baidu.com/s?wd=" + encodeURIComponent(params.name)
@@ -60,17 +62,19 @@ export default {
         },
         dark_model(state) {
             if (state) {
-                this.Chart.dispose();
                 this.initChart("dark");
+                this.nowModal = "dark"
             } else {
-                this.Chart.dispose();
                 this.initChart();
+                this.nowModal = ""
             }
         },
-        changeChart(option) {
-            this.Chart.dispose();
-            this.Chart = echarts.init(this.$refs.chartDom); // 初始畫圖表
-            this.option && this.Chart.setOption(option);
-        }
+        // changeChart(option) {
+
+        //     // this.Chart.dispose();
+        //     // this.Chart = echarts.init(this.$refs.chartDom); // 初始畫圖表
+        //     // this.option && this.Chart.setOption(option);
+        // }
     },
 };
+
